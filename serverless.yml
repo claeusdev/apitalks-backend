@@ -1,0 +1,85 @@
+
+
+service: rest # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "*"
+
+functions:
+  seedData:
+    handler: seed.seedData
+    events:
+      - http:
+          path: seed
+          method: post
+          cors: true
+  createStore:
+    handler: src/api/shops/createStore.create
+    events:
+      - http:
+          path: shops
+          method: post
+          cors: true
+
+  getAllStores:
+    handler: src/api/shops/getStores.getAllStores
+    events:
+      - http:
+          path: shops
+          method: get
+          cors: true
+  getStore:
+    handler: src/api/shops/getStore.getStore
+    events:
+      - http:
+          path: shops/{id}
+          method: get
+          cors: true
+  
+  updateStore:
+    handler: src/api/shops/updateStore.update
+    events:
+      - http:
+          path: shops/{id}
+          method: put
+          cors: true
+
+  deleteStore:
+    handler: src/api/shops/deleteStore.delete
+    events:
+      - http:
+          path: shops/{id}
+          method: delete
+          cors: true
+resources:
+  Resources:
+    StoreDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - 
+            AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - 
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: 'shops'
+plugins:
+  - serverless-offline
