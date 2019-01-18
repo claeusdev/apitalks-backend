@@ -5,9 +5,12 @@ service: rest # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
+  apiKeys:
+    - rest-apikey
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - lambda:InvokeFunction
         - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
@@ -20,17 +23,14 @@ provider:
 functions:
   seedData:
     handler: seed.seedData
-    events:
-      - http:
-          path: seed
-          method: post
-          cors: true
+    timeout: 900
   createStore:
     handler: src/api/shops/createStore.create
     events:
       - http:
           path: shops
           method: post
+          private: true
           cors: true
 
   getAllStores:
@@ -39,6 +39,7 @@ functions:
       - http:
           path: shops
           method: get
+          private: true
           cors: true
   getStore:
     handler: src/api/shops/getStore.getStore
@@ -46,6 +47,7 @@ functions:
       - http:
           path: shops/{id}
           method: get
+          private: true
           cors: true
   
   updateStore:
@@ -54,6 +56,7 @@ functions:
       - http:
           path: shops/{id}
           method: put
+          private: true
           cors: true
 
   deleteStore:
@@ -62,6 +65,15 @@ functions:
       - http:
           path: shops/{id}
           method: delete
+          private: true
+          cors: true
+  contact:
+    handler: src/api/contact.contact
+    events:
+      - http:
+          path: contact
+          method: post
+          private: true
           cors: true
 resources:
   Resources:
@@ -81,5 +93,21 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: 'shops'
+    ContactDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - 
+            AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - 
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: 'contacts'
 plugins:
   - serverless-offline

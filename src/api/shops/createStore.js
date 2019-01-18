@@ -6,6 +6,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 module.exports.create = (evt, ctx, cb) => {
   const payLoad = evt.body;
+  console.log(evt.body);
   const {
     brand,
     storeNumber,
@@ -85,7 +86,8 @@ module.exports.create = (evt, ctx, cb) => {
         statusCode: 200,
         headers: {
           'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-          'Access-Control-Allow-Credentials': true // Required for cookies, authorization headers with HTTPS
+          'Access-Control-Allow-Credentials': true
+          // Required for cookies, authorization headers with HTTPS
         },
         body: JSON.stringify({
           message: 'succesfully saved store',
