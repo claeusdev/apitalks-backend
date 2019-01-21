@@ -75,6 +75,7 @@ functions:
           method: post
           private: true
           cors: true
+
 resources:
   Resources:
     StoreDynamoDbTable:
@@ -98,16 +99,26 @@ resources:
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          - 
+          -
             AttributeName: "id"
             AttributeType: "S"
         KeySchema:
-          - 
+          -
             AttributeName: "id"
             KeyType: "HASH"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: 'contacts'
+custom:
+  dynamodb:
+    start:
+      seed: true
+    seed:
+      domain:
+        sources:
+          - table: shops
+            sources: [./stores.json]
 plugins:
+  - serverless-dynamodb-local
   - serverless-offline
