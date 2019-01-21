@@ -75,7 +75,6 @@ functions:
           method: post
           private: true
           cors: true
-
 resources:
   Resources:
     StoreDynamoDbTable:
