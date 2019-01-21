@@ -110,15 +110,6 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: 'contacts'
-custom:
-  dynamodb:
-    start:
-      seed: true
-    seed:
-      domain:
-        sources:
-          - table: shops
-            sources: [./stores.json]
+
 plugins:
-  - serverless-dynamodb-local
   - serverless-offline
